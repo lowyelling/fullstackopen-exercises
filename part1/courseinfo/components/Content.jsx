@@ -1,11 +1,18 @@
-function Content({ part1, exercises1, part2, exercises2, part3, exercises3 }) {
+function Part({name, exercises}){
+    return (
+            <p>{name} {exercises}</p>
+    )
+}
+
+
+function Content({parts}) {
     return (
         <>
-        <p>{part1} {exercises1}</p>
-        <p>{part2} {exercises2}</p>
-        <p>{part3} {exercises3}</p>
+            <Part name={parts[0].name} exercises={parts[0].exercises} />
+            <Part name={parts[1].name} exercises={parts[1].exercises} />
+            <Part name={parts[2].name} exercises={parts[2].exercises} />
         </>
-    )
+        )
     }
 
 export default Content
