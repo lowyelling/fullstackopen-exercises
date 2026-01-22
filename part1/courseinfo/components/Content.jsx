@@ -1,13 +1,13 @@
-function Part({ part }) {
+function Part({part}) {
   return <p>{part.name} {part.exercises}</p>
 }
 
-function Content({ part1, part2, part3 }) {
+function Content({parts}) {
   return (
     <>
-      <Part part={part1} />
-      <Part part={part2} />
-      <Part part={part3} />
+      <Part part={parts[0]} />
+      <Part part={parts[1]} />
+      <Part part={parts[2]} />
     </>
   )
 }
