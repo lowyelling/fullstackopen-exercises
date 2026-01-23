@@ -2,7 +2,10 @@ import { useState } from 'react'
 
 function StatisticLine(props){
   return (
-     <div>{props.text} {props.value}</div>
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
   )
 }
 
@@ -17,12 +20,16 @@ function Statistics(props){
       {all === 0 
         ? <div>No feedback given</div> 
         : <div>
-            <StatisticLine text="good" value={props.good} />
-            <StatisticLine text="neutral" value={props.neutral} />
-            <StatisticLine text="bad" value={props.bad} />
-            <StatisticLine text="all" value={all} />
-            <StatisticLine text="average" value={average} />
-            <StatisticLine text="positive" value={positive} />
+            <table>
+              <tbody>
+                <StatisticLine text="good" value={props.good} />
+                <StatisticLine text="neutral" value={props.neutral} />
+                <StatisticLine text="bad" value={props.bad} />
+                <StatisticLine text="all" value={all} />
+                <StatisticLine text="average" value={average} />
+                <StatisticLine text="positive" value={`${positive.toFixed(1)} %`} />
+              </tbody>
+            </table>
           </div>    
       }
     </>
