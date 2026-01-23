@@ -28,10 +28,16 @@ const Part = (props) => (
 const Total = (props) => {
   //const first = props.part[0].exercises
   // console.log('Total props:', props.total[0].exercises)
-  const a = props.total[0].exercises
-  const b = props.total[1].exercises
-  const c = props.total[2].exercises
-  const total = a+b+c
+  // old manual method
+  // const a = props.total[0].exercises
+  // const b = props.total[1].exercises
+  // const c = props.total[2].exercises
+  // const total = a+b+c
+
+  const total = props.total.reduce(function(sum, part){
+    return sum + part.exercises
+  }, 0)
+
   return (
     <h4>Total of {total} exercises</h4>
   )
@@ -40,7 +46,7 @@ const Total = (props) => {
 const Course = (props) => {
   //console.log('course:',props.course)
   //console.log(props.course.id)
-  // console.log(props.course.parts)
+  //console.log(props.course.parts)
   return (
     <>
       <Header 
