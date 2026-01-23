@@ -9,12 +9,13 @@ const Content = (props) => {
   // console.log('Content props:', props)
   // console.log('slice', props.part[0])
     return (
+      <>
     <div>
       <Part part={props.part[0]} />
       <Part part={props.part[1]} />
       <Part part={props.part[2]} />
-      <Part part={props.part[3]} />
     </div>
+    </>
     )
 }
 
@@ -24,12 +25,22 @@ const Part = (props) => (
   </p>
 )
 
-//const Total = (props) => <p>Number of exercises {props.total}</p>
+const Total = (props) => {
+  //const first = props.part[0].exercises
+  // console.log('Total props:', props.total[0].exercises)
+  const a = props.total[0].exercises
+  const b = props.total[1].exercises
+  const c = props.total[2].exercises
+  const total = a+b+c
+  return (
+    <h4>Total of {total} exercises</h4>
+  )
+}
 
 const Course = (props) => {
   //console.log('course:',props.course)
-  // console.log(props.course.id)
-  //console.log(props.course.parts)
+  //console.log(props.course.id)
+  // console.log(props.course.parts)
   return (
     <>
       <Header 
@@ -37,6 +48,9 @@ const Course = (props) => {
       />
       <Content 
         part={props.course.parts}
+      />
+      <Total 
+        total={props.course.parts}
       />
     </>
   )
@@ -61,11 +75,6 @@ const App = () => {
         name: 'State of a component',
         exercises: 14,
         id: 3
-      },
-      {
-        name: 'test',
-        exercises: 1,
-        id: 4
       }
     ]
   }
