@@ -29,19 +29,43 @@ const App = function () {
 
   const handleAddName = function (event) {
     event.preventDefault()
-    const nameExists = persons.some(function (person) {
-      return person.name === newName
+    // find existing person by name - part 2.15 
+    const nameExists = persons.find(function (person) {
+      return person.name.toLowerCase() === newName.toLowerCase()
     })
+  
+    // #1: If name exists -> update number
+    if (nameExists) {
+      const ok = window.confirm(`${newName} is already added to the phonebook, 
+        replace old number with new one?`)
+      if (!ok) {
+        return
+      }
 
-    if (nameExists === true) {
-      alert(`${newName} is already added to the phonebook`)
-      return
+      const updatedPerson = {
+        ...nameExists,
+        number: newNumber
+      }
+
+      personsService
+        .update(nameExists.id, updatedPerson)
+        .then(function(response){
+          setPersons(
+            persons.map(function(person){
+              return person.id === nameExists.id ? response.data : person
+            })
+          )
+          setNewName('')
+          setNewNumber('')
+        })
+
+        return
     }
 
+  // #2: If name is new -> create new person
     const nameObject = {
       name: newName,
       number: newNumber,
-      //id: persons.length + 1
       id: (persons.length + 1).toString()
     }
 
