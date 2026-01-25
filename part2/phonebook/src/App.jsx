@@ -34,7 +34,7 @@ const App = function () {
     const nameExists = persons.find(function (person) {
       return person.name === newName
     })
-
+  
     // #1: If name exists -> update number
     if (nameExists) {
       const ok = window.confirm(`${newName} is already added to the phonebook, 
@@ -56,10 +56,6 @@ const App = function () {
               return person.id === nameExists.id ? response.data : person
             })
           )
-          setMessage(`Changed number of ${updatedPerson.name}`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
           setNewName('')
           setNewNumber('')
         })
