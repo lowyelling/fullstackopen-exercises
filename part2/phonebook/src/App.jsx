@@ -4,12 +4,14 @@ import PersonForm from '../components/PersonForm'
 import Persons from '../components/Persons'
 import axios from 'axios'
 import personsService from '../services/persons'
+import Notification from '../components/Notification'
 
 const App = function () {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState('')
 
   useEffect(function(){
     personsService
@@ -29,19 +31,46 @@ const App = function () {
 
   const handleAddName = function (event) {
     event.preventDefault()
-    const nameExists = persons.some(function (person) {
+    const nameExists = persons.find(function (person) {
       return person.name === newName
     })
 
-    if (nameExists === true) {
-      alert(`${newName} is already added to the phonebook`)
-      return
+    // #1: If name exists -> update number
+    if (nameExists) {
+      const ok = window.confirm(`${newName} is already added to the phonebook, 
+        replace old number with new one?`)
+      if (!ok) {
+        return
+      }
+
+      const updatedPerson = {
+        ...nameExists,
+        number: newNumber
+      }
+
+      personsService
+        .update(nameExists.id, updatedPerson)
+        .then(function(response){
+          setPersons(
+            persons.map(function(person){
+              return person.id === nameExists.id ? response.data : person
+            })
+          )
+          setMessage(`Changed number of ${updatedPerson.name}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+          setNewName('')
+          setNewNumber('')
+        })
+
+        return
     }
 
+  // #2: If name is new -> create new person
     const nameObject = {
       name: newName,
       number: newNumber,
-      //id: persons.length + 1
       id: (persons.length + 1).toString()
     }
 
@@ -49,6 +78,10 @@ const App = function () {
       .create(nameObject)
       .then(function(response){
         setPersons(persons.concat(response.data))
+        setMessage(`Added ${nameObject.name}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         setNewName('')
         setNewNumber('')
       })
@@ -80,7 +113,7 @@ const App = function () {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <Notification message={message}/>
       <Filter 
         filter={filter} 
         handleFilterChange={handleFilterChange} 

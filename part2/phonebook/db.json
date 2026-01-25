@@ -26,19 +26,19 @@
       "number": "019-389-3919"
     },
     {
-      "id": "1020",
-      "name": "testing id number",
-      "number": "039-429-4959"
+      "id": "6",
+      "name": "Test test",
+      "number": "236-323-1135"
     },
     {
-      "id": "[object Undefined]",
-      "name": "Testing ID stringify",
-      "number": "094-393-5959"
+      "id": "7",
+      "name": "Jenna Marbles",
+      "number": "294-653-1365"
     },
     {
       "id": "8",
-      "name": "Correcting toString",
-      "number": "423-552-3138"
+      "name": "Ben Shapiro",
+      "number": "395-113-5624"
     }
   ]
 }
