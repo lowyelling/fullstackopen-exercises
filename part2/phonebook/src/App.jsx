@@ -3,14 +3,7 @@ import Filter from '../components/Filter'
 import PersonForm from '../components/PersonForm'
 import Persons from '../components/Persons'
 import axios from 'axios'
-
-// const promise = axios.get('http://localhost:3001/persons')
-// console.log('axios promise:', promise)
-
-// promise.then(function(response){
-//   //console.log('promise response', response.data)
-//   return response.data
-// })
+import personsService from '../services/persons'
 
 const App = function () {
   const [persons, setPersons] = useState([])
@@ -19,15 +12,23 @@ const App = function () {
   const [filter, setFilter] = useState('')
 
   useEffect(function(){
-    //console.log('effect')
-    axios.get('http://localhost:3001/persons')
+    personsService
+      .getAll()
       .then(function(response){
-        //console.log('promise fulfilled')
-        // console.log('promise response', response)
         setPersons(response.data)
       })
   }, [])
-  //console.log('render',persons.length, 'persons')
+
+  // useEffect(function(){
+  //   //console.log('effect')
+  //   axios.get('http://localhost:3001/persons')
+  //     .then(function(response){
+  //       //console.log('promise fulfilled')
+  //       // console.log('promise response', response)
+  //       setPersons(response.data)
+  //     })
+  // }, [])
+  // //console.log('render',persons.length, 'persons')
 
   const handleFilterChange = function (event) {
     setFilter(event.target.value)
@@ -54,13 +55,20 @@ const App = function () {
       id: persons.length + 1
     }
 
-    axios
-      .post('http://localhost:3001/persons', nameObject)
+    personsService
+      .create(nameObject)
       .then(function(response){
         setPersons(persons.concat(response.data))
         setNewName('')
         setNewNumber('')
       })
+  //     axios
+  //     .post('http://localhost:3001/persons', nameObject)
+  //     .then(function(response){
+  //       setPersons(persons.concat(response.data))
+  //       setNewName('')
+  //       setNewNumber('')
+  //     })
   }
 
   const handleNameChange = function (event) {
