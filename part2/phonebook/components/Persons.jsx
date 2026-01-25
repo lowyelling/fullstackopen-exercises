@@ -4,9 +4,16 @@ const Persons = function (props) {
         <>
         {props.personsToShow.map(function (person) {
             return (
-                <div key={person.id}>
+                <li key={person.id}>
                     {person.name} {person.number}
-                </div>
+                    {'  '}
+                    <button onClick={()=>
+                        props.handleDelete(person.id, person.name)
+                    }>
+                        delete
+                    </button>
+                </li>
+
                 )
             })
         }

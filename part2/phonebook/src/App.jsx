@@ -19,17 +19,6 @@ const App = function () {
       })
   }, [])
 
-  // useEffect(function(){
-  //   //console.log('effect')
-  //   axios.get('http://localhost:3001/persons')
-  //     .then(function(response){
-  //       //console.log('promise fulfilled')
-  //       // console.log('promise response', response)
-  //       setPersons(response.data)
-  //     })
-  // }, [])
-  // //console.log('render',persons.length, 'persons')
-
   const handleFilterChange = function (event) {
     setFilter(event.target.value)
   }
@@ -52,7 +41,8 @@ const App = function () {
     const nameObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
+      //id: persons.length + 1
+      id: (persons.length + 1).toString()
     }
 
     personsService
@@ -62,13 +52,6 @@ const App = function () {
         setNewName('')
         setNewNumber('')
       })
-  //     axios
-  //     .post('http://localhost:3001/persons', nameObject)
-  //     .then(function(response){
-  //       setPersons(persons.concat(response.data))
-  //       setNewName('')
-  //       setNewNumber('')
-  //     })
   }
 
   const handleNameChange = function (event) {
@@ -77,6 +60,21 @@ const App = function () {
 
   const handleNumberChange = function (event) {
     setNewNumber(event.target.value)
+  }
+
+  const handleDelete = function(id,name){
+    const ok = window.confirm(`Delete ${name}?`)
+    if (!ok) {
+      return
+    }
+
+    personsService
+      .remove(id)
+      .then(function(){
+        setPersons(persons.filter(function(person){
+          return person.id !== id
+        }))
+      })
   }
 
   return (
@@ -101,7 +99,10 @@ const App = function () {
 
       <h2>Numbers</h2>
 
-      <Persons personsToShow={personsToShow} />
+      <Persons 
+        personsToShow={personsToShow} 
+        handleDelete={handleDelete}
+      />
     </div>
   )
 }

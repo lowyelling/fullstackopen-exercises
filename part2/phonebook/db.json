@@ -21,14 +21,24 @@
       "id": "4"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Fake Name",
       "number": "019-389-3919"
     },
     {
-      "id": 6,
-      "name": "testing hey",
-      "number": "019-393-9494"
+      "id": "1020",
+      "name": "testing id number",
+      "number": "039-429-4959"
+    },
+    {
+      "id": "[object Undefined]",
+      "name": "Testing ID stringify",
+      "number": "094-393-5959"
+    },
+    {
+      "id": "8",
+      "name": "Correcting toString",
+      "number": "423-552-3138"
     }
   ]
 }
