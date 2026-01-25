@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Filter from '../components/Filter'
 import PersonForm from '../components/PersonForm'
 import Persons from '../components/Persons'
@@ -40,7 +39,6 @@ const App = function () {
 
   const handleAddName = function (event) {
     event.preventDefault()
-
     const nameExists = persons.some(function (person) {
       return person.name === newName
     })
@@ -56,9 +54,13 @@ const App = function () {
       id: persons.length + 1
     }
 
-    setPersons(persons.concat(nameObject))
-    setNewName('')
-    setNewNumber('')
+    axios
+      .post('http://localhost:3001/persons', nameObject)
+      .then(function(response){
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleNameChange = function (event) {
