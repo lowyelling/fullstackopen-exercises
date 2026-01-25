@@ -11,7 +11,8 @@ const App = function () {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
 
   useEffect(function(){
     personsService
@@ -56,8 +57,28 @@ const App = function () {
               return person.id === nameExists.id ? response.data : person
             })
           )
+          setMessage(`Updated ${nameExists.name}`)
+          setMessageType('success')
+          setTimeout(() => {
+            setMessage(null)
+            setMessageType(null)
+          }, 5000)
           setNewName('')
           setNewNumber('')
+        })
+        .catch(function(error){
+          setMessage(`Information of ${updatedPerson.name} has already been removed from server`)
+          setMessageType('error')
+          setTimeout(() => {
+            setMessage(null)
+            setMessageType(null)
+          }, 5000)
+          
+          setPersons(
+            persons.filter(function(person){
+              return person.id !== updatedPerson.id
+            }))
+
         })
 
         return
@@ -75,9 +96,11 @@ const App = function () {
       .then(function(response){
         setPersons(persons.concat(response.data))
         setMessage(`Added ${nameObject.name}`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
+        setMessageType('success')
+        setTimeout(() => {
+          setMessage(null)
+          setMessageType(null)
+        }, 5000)
         setNewName('')
         setNewNumber('')
       })
@@ -109,7 +132,9 @@ const App = function () {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message}/>
+      <Notification 
+        message={message}
+        type={messageType}/>
       <Filter 
         filter={filter} 
         handleFilterChange={handleFilterChange} 
