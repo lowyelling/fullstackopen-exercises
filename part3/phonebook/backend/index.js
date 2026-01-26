@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
-const PORT = 3001
+const PORT = process.env.PORT || 3001
+// const PORT = 3001
 // const baseURL = "http://localhost:3001" - Not needed for backend
 // Express uses path-matching library that expects patterns without the http:
 
