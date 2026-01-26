@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const morgan = require('morgan')
 const PORT = 3001
 // const baseURL = "http://localhost:3001" - Not needed for backend
 // Express uses path-matching library that expects patterns without the http:
 
 app.use(cors())
+app.use(morgan('tiny'))
 app.use(express.json()) //json-parser middleware
 
 let phonebook = [
@@ -55,7 +57,7 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    entries = phonebook.filter(function(entry){
+    phonebook = phonebook.filter(function(entry){
         return entry.id !== id
     })
     response.status(204).end()
