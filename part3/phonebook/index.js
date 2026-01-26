@@ -7,8 +7,20 @@ const PORT = 3001
 // Express uses path-matching library that expects patterns without the http:
 
 app.use(cors())
-app.use(morgan('tiny'))
 app.use(express.json()) //json-parser middleware
+// express.json must run before morgan so that req.body exists
+
+morgan.token('postData', function (req) {
+  if (req.method === 'POST') {
+    return JSON.stringify(req.body) //logs body only
+  }
+  return ''
+})
+
+app.use(
+    morgan(':method :url :status :res[content-length] - :response-time ms :postData')
+) 
+
 
 let phonebook = [
     { 
