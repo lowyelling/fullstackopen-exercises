@@ -6,7 +6,7 @@ const PORT = 3001
 // Express uses path-matching library that expects patterns without the http:
 
 app.use(cors())
-app.use(express.json())
+app.use(express.json()) //json-parser middleware
 
 let phonebook = [
     { 
@@ -59,6 +59,27 @@ app.delete('/api/persons/:id', (request, response) => {
         return entry.id !== id
     })
     response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    function generateUniqueId(phonebook) {
+        let id
+
+        do {
+            // pick a big range so collisions are unlikely
+            id = String(Math.floor(Math.random() * 1000000000) + 1)
+        } while (phonebook.find(function (p) { return p.id === id }))
+
+        return id
+        }
+
+    const entry = request.body 
+    const newEntry = {
+        ...entry,
+        id: generateUniqueId(phonebook)
+    }
+    phonebook = phonebook.concat(newEntry)
+    response.json(newEntry)
 })
 
 app.listen(PORT, () => {
