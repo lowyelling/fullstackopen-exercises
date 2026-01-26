@@ -61,25 +61,43 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
+function generateUniqueId(phonebook) {
+    let id
+
+    do {
+        // pick a big range so collisions are unlikely
+        id = String(Math.floor(Math.random() * 1000000000) + 1)
+    } while (phonebook.find(function (p) { return p.id === id }))
+
+    return id
+    }
+
 app.post('/api/persons', (request, response) => {
-    function generateUniqueId(phonebook) {
-        let id
+    const entry = request.body // Client supplied and untrusted
 
-        do {
-            // pick a big range so collisions are unlikely
-            id = String(Math.floor(Math.random() * 1000000000) + 1)
-        } while (phonebook.find(function (p) { return p.id === id }))
+    if (!entry.name || !entry.number) {
+        return response.status(400).json({ 
+            error: 'name or number is missing' 
+        })
+    }
 
-        return id
-        }
+    const nameExists = phonebook.find(function(p){
+        return p.name === entry.name
+    })
 
-    const entry = request.body 
+    if (nameExists) {
+        return response.status(400).json({ 
+            error: 'name already exists in phonebook' 
+        })
+    }   
+
     const newEntry = {
-        ...entry,
+        name: entry.name,
+        number: entry.number,
         id: generateUniqueId(phonebook)
     }
     phonebook = phonebook.concat(newEntry)
-    response.json(newEntry)
+    response.status(201).json(newEntry)
 })
 
 app.listen(PORT, () => {
