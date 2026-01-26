@@ -31,10 +31,15 @@ let phonebook = [
     }
 ]
 
-app.get('/api/persons', (req, res) => {
-  res.json(phonebook)
+app.get('/api/persons', (request, response) => {
+  response.json(phonebook)
+})
+
+app.get('/info', (request, response) => {
+    const date = Date()
+    response.send(`<p>Phonebook has info for ${phonebook.length} people</p><p>${date}</p>`) 
 })
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`)
 })
