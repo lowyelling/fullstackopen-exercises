@@ -45,6 +45,10 @@ let phonebook = [
     }
 ]
 
+app.get('/', function (request, response) {
+  response.send('Phonebook backend is running on Render!')
+}) // added for Exercise 3.10 for Render deployment check
+
 app.get('/api/persons', (request, response) => {
   response.json(phonebook)
 })
