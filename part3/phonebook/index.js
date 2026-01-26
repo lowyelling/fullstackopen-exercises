@@ -53,6 +53,14 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    entries = phonebook.filter(function(entry){
+        return entry.id !== id
+    })
+    response.status(204).end()
+})
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
