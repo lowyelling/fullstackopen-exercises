@@ -3,10 +3,12 @@ const app = express()
 const cors = require('cors')
 const morgan = require('morgan')
 const PORT = process.env.PORT || 3001
+
 // const PORT = 3001
 // const baseURL = "http://localhost:3001" - Not needed for backend
 // Express uses path-matching library that expects patterns without the http:
 
+app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json()) //json-parser middleware
 // express.json must run before morgan so that req.body exists
@@ -45,9 +47,13 @@ let phonebook = [
     }
 ]
 
-app.get('/', function (request, response) {
-  response.send('Phonebook backend is running on Render!')
-}) // added for Exercise 3.10 for Render deployment check
+// app.get('/', function (request, response) {
+//   response.send('Phonebook backend is running on Render!')
+// }) // added for Exercise 3.10 for Render deployment check
+
+app.get('/health', (request, response) => {
+  response.send('OK')
+}) // added for Exercise 3.11 - stop override of frontend homepage
 
 app.get('/api/persons', (request, response) => {
   response.json(phonebook)
