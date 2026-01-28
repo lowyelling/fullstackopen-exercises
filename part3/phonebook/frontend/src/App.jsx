@@ -27,8 +27,8 @@ const App = function () {
   }
 
   const personsToShow = persons.filter(function (person) {
-    return person.name.toLowerCase().includes(filter.toLowerCase())
-  })
+    return (person.name || '').toLowerCase().includes(filter.toLowerCase())
+  }) // added the || '' due to MongoDB Atlas testing
 
   const handleAddName = function (event) {
     event.preventDefault()

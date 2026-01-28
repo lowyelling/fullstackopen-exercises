@@ -26,28 +26,64 @@ app.use(
     morgan(':method :url :status :res[content-length] - :response-time ms :postData')
 ) 
 
-let phonebook = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+const mongoose = require('mongoose')
+
+// validate args
+if (process.argv.length < 3) {
+  console.log('Provide password as argument: node mongo.js <password>')
+  process.exit(1) //exit with error code
+}
+
+// read passwork - DO NOT SAVE PASSWORD TO GITHUB
+const password = process.argv[2]
+
+// build URL after validation
+const url = `mongodb+srv://lily_db_user:${password}@cluster0.fwjxnhg.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`
+
+mongoose.set('strictQuery',false)
+mongoose.connect(url, { family: 4 })
+
+//schema definition
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+})
+
+// modify the method of schema to remove __v mongo versioning
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+// create matching model
+const Person = mongoose.model('Person', personSchema)
+
+// removed for Exercise 3.13+
+// let phonebook = [
+//     { 
+//       "id": "1",
+//       "name": "Arto Hellas", 
+//       "number": "040-123456"
+//     },
+//     { 
+//       "id": "2",
+//       "name": "Ada Lovelace", 
+//       "number": "39-44-5323523"
+//     },
+//     { 
+//       "id": "3",
+//       "name": "Dan Abramov", 
+//       "number": "12-43-234345"
+//     },
+//     { 
+//       "id": "4",
+//       "name": "Mary Poppendieck", 
+//       "number": "39-23-6423122"
+//     }
+// ]
 
 // app.get('/', function (request, response) {
 //   response.send('Phonebook backend is running on Render!')
@@ -58,8 +94,16 @@ app.get('/health', (request, response) => {
 }) // added for Exercise 3.11 - stop override of frontend homepage
 
 app.get('/api/persons', (request, response) => {
-  response.json(phonebook)
+    Person
+        .find({})
+        .then(function(people){
+            return response.json(people)
+        })
 })
+
+// app.get('/api/persons', (request, response) => {
+//   response.json(phonebook)
+// }) // removed for Exercise 3.13 - connect to MongoDB Atlas instead
 
 app.get('/info', (request, response) => {
     const date = Date()
