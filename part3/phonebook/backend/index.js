@@ -1,15 +1,16 @@
 const express = require('express')
 const app = express()
-const cors = require('cors')
+// const cors = require('cors')
 const morgan = require('morgan')
 const PORT = process.env.PORT || 3001
+
 
 // const PORT = 3001
 // const baseURL = "http://localhost:3001" - Not needed for backend
 // Express uses path-matching library that expects patterns without the http:
 
 app.use(express.static('dist'))
-app.use(cors())
+// app.use(cors())
 app.use(express.json()) //json-parser middleware
 // express.json must run before morgan so that req.body exists
 
@@ -19,6 +20,7 @@ morgan.token('postData', function (req) {
   }
   return ''
 })
+
 
 app.use(
     morgan(':method :url :status :res[content-length] - :response-time ms :postData')
@@ -98,7 +100,7 @@ function generateUniqueId(phonebook) {
 
 app.post('/api/persons', (request, response) => {
     const entry = request.body // Client supplied and untrusted
-
+    // console.log('request body', entry)
     if (!entry.name || !entry.number) {
         return response.status(400).json({ 
             error: 'name or number is missing' 
