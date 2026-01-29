@@ -3,4 +3,5 @@ node_modules/.vite/
 .vite/
 .DS_Store
 package-lock.json
-.env
+*.env
+mongo.js

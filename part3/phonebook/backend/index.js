@@ -3,7 +3,7 @@ const app = express()
 // const cors = require('cors')
 const morgan = require('morgan')
 const PORT = process.env.PORT || 3001
-
+const Person = require('./models/person.js')
 
 // const PORT = 3001
 // const baseURL = "http://localhost:3001" - Not needed for backend
@@ -21,45 +21,9 @@ morgan.token('postData', function (req) {
   return ''
 })
 
-
 app.use(
     morgan(':method :url :status :res[content-length] - :response-time ms :postData')
 ) 
-
-const mongoose = require('mongoose')
-
-// validate args
-if (process.argv.length < 3) {
-  console.log('Provide password as argument: node mongo.js <password>')
-  process.exit(1) //exit with error code
-}
-
-// read passwork - DO NOT SAVE PASSWORD TO GITHUB
-const password = process.argv[2]
-
-// build URL after validation
-const url = `mongodb+srv://lily_db_user:${password}@cluster0.fwjxnhg.mongodb.net/phonebook?retryWrites=true&w=majority&appName=Cluster0`
-
-mongoose.set('strictQuery',false)
-mongoose.connect(url, { family: 4 })
-
-//schema definition
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-
-// modify the method of schema to remove __v mongo versioning
-personSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
-
-// create matching model
-const Person = mongoose.model('Person', personSchema)
 
 // removed for Exercise 3.13+
 // let phonebook = [
