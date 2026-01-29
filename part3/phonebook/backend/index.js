@@ -3,9 +3,11 @@ const express = require('express')
 const app = express()
 // const cors = require('cors')
 const morgan = require('morgan')
-const PORT = process.env.PORT // || 3001 // removed for 3.14
+const PORT = process.env.PORT  || 3001 // removed for 3.14
 const Person = require('./models/person.js')
+// console.log('env port is', process.env.PORT)
 
+app.use(express.static('build'))
 // const PORT = 3001
 // const baseURL = "http://localhost:3001" - Not needed for backend
 // Express uses path-matching library that expects patterns without the http:
@@ -96,16 +98,17 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
-function generateUniqueId(phonebook) {
-    let id
+// remove for Exercise 3.14
+// function generateUniqueId(phonebook) {
+//     let id
 
-    do {
-        // pick a big range so collisions are unlikely
-        id = String(Math.floor(Math.random() * 1000000000) + 1)
-    } while (phonebook.find(function (p) { return p.id === id }))
+//     do {
+//         // pick a big range so collisions are unlikely
+//         id = String(Math.floor(Math.random() * 1000000000) + 1)
+//     } while (phonebook.find(function (p) { return p.id === id }))
 
-    return id
-    }
+//     return id
+//     }
 
 app.post('/api/persons', (request, response) => {
     const entry = request.body // Client supplied and untrusted
@@ -116,23 +119,34 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const nameExists = phonebook.find(function(p){
-        return p.name === entry.name
+    const person = new Person({
+        name: entry.name,
+        number: entry.number
     })
 
-    if (nameExists) {
-        return response.status(400).json({ 
-            error: 'name already exists in phonebook' 
+    person.save()
+        .then(function(savedPerson){
+            response.status(201).json(savedPerson)
         })
-    }   
 
-    const newEntry = {
-        name: entry.name,
-        number: entry.number,
-        id: generateUniqueId(phonebook)
-    }
-    phonebook = phonebook.concat(newEntry)
-    response.status(201).json(newEntry)
+// remove for Exercise 3.14
+    // const nameExists = phonebook.find(function(p){
+    //     return p.name === entry.name
+    // })
+
+    // if (nameExists) {
+    //     return response.status(400).json({ 
+    //         error: 'name already exists in phonebook' 
+    //     })
+    // }   
+
+    // const newEntry = {
+    //     name: entry.name,
+    //     number: entry.number,
+    //     id: generateUniqueId(phonebook)
+    // }
+    // phonebook = phonebook.concat(newEntry)
+    // response.status(201).json(newEntry)
 })
 
 app.listen(PORT, () => {
