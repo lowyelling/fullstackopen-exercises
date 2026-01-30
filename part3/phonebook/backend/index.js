@@ -77,7 +77,7 @@ app.get('/api/persons', (request, response) => {
 //     response.send(`<p>Phonebook has info for ${phonebook.length} people</p><p>${date}</p>`) 
 // }) 
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id) 
         .then(function(entry){
             if (entry) {
@@ -88,17 +88,35 @@ app.get('/api/persons/:id', (request, response) => {
             } // if id is valid MongoDB objectId but not found
         })
         .catch(function(error){
-            console.log(error)
-            // response.status(500).end()
-            response.status(400).send({ error: 'malformatted id' }) // this matches better than 500
-        }) // I tried /4 as the id which isn't valid MongdoDB objectID
+            next(error)
+        })
 })
 
+// Exercise 3.15:
+// app.delete('/api/persons/:id', (request, response) => {
+//     Person.findByIdAndDelete(request.params.id)
+//         .then(function(entry){
+//             if (entry) {
+//                 response.status(204).end()
+//             }
+//             else {
+//                 response.status(404).end()
+//             } // if id is valid MongoDB objectId but not found
+//         })
+//         .catch(function(error){
+//             console.log(error)
+//             response.status(400).send({ error: 'malformatted id' }) // this matches better than 500
+//         })
+//     // phonebook = phonebook.filter(function(entry){
+//     //     return entry.id !== id
+//     // })
+//     // response.status(204).end()
+// })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
-        .then(function(entry){
-            if (entry) {
+        .then(function(person){
+            if (person) {
                 response.status(204).end()
             }
             else {
@@ -106,8 +124,7 @@ app.delete('/api/persons/:id', (request, response) => {
             } // if id is valid MongoDB objectId but not found
         })
         .catch(function(error){
-            console.log(error)
-            response.status(400).send({ error: 'malformatted id' }) // this matches better than 500
+            next(error)
         })
     // phonebook = phonebook.filter(function(entry){
     //     return entry.id !== id
@@ -115,6 +132,13 @@ app.delete('/api/persons/:id', (request, response) => {
     // response.status(204).end()
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+  next(error)
+}
 
 // app.get('/api/persons/:id', (request, response) => {
 //     const id = request.params.id 
@@ -187,6 +211,10 @@ app.post('/api/persons', (request, response) => {
     // phonebook = phonebook.concat(newEntry)
     // response.status(201).json(newEntry)
 })
+
+// this has to be the last loaded middleware
+//  also all the routes should be registered before this!
+app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
