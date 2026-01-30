@@ -56,6 +56,7 @@ app.use(
 //   response.send('Phonebook backend is running on Render!')
 // }) // added for Exercise 3.10 for Render deployment check
 
+
 app.get('/health', (request, response) => {
   response.send('OK')
 }) // added for Exercise 3.11 - stop override of frontend homepage
@@ -132,14 +133,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
     // response.status(204).end()
 })
 
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } 
-  next(error)
-}
-
 // app.get('/api/persons/:id', (request, response) => {
 //     const id = request.params.id 
 //     const entry = phonebook.find(function(entry){
@@ -212,8 +205,46 @@ app.post('/api/persons', (request, response) => {
     // response.status(201).json(newEntry)
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+    const updated = request.body
+
+    const updatedFields = {
+        name: updated.name,
+        number: updated.number,
+    }
+
+    Person.findByIdAndUpdate(
+        request.params.id,
+        updatedFields,
+            { new: true }  // return the updated doc
+    )
+        .then(updatedPerson => {
+            if (updatedPerson) {
+                response.json(updatedPerson)
+            } else {
+                response.status(404).end()
+            }
+        })
+        .catch(error => next(error))
+})
+
+
 // this has to be the last loaded middleware
 //  also all the routes should be registered before this!
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+    
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    } 
+    if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    } // not very useful bc schema has no validation yet
+
+    next(error)
+}
+
 app.use(errorHandler)
 
 app.listen(PORT, () => {
