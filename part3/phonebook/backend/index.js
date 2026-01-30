@@ -1,13 +1,12 @@
 require('dotenv').config()
 const express = require('express')
 const app = express()
-// const cors = require('cors')
+// const cors = require('cors') // removed due to single origin deployment
 const morgan = require('morgan')
-const PORT = process.env.PORT  || 3001 // removed for 3.14
+const PORT = process.env.PORT  || 3001
 const Person = require('./models/person.js')
-// console.log('env port is', process.env.PORT)
+// console.log('env port is', process.env.PORT) // saw that process.env.PORT is undefined 
 
-app.use(express.static('build'))
 // const PORT = 3001
 // const baseURL = "http://localhost:3001" - Not needed for backend
 // Express uses path-matching library that expects patterns without the http:
@@ -56,10 +55,10 @@ app.use(
 //   response.send('Phonebook backend is running on Render!')
 // }) // added for Exercise 3.10 for Render deployment check
 
-
-app.get('/health', (request, response) => {
-  response.send('OK')
-}) // added for Exercise 3.11 - stop override of frontend homepage
+// Removed for Exercise 3.18:
+// app.get('/health', (request, response) => {
+//   response.send('OK')
+// }) // added for Exercise 3.11 - stop override of frontend homepage
 
 app.get('/api/persons', (request, response) => {
     Person
@@ -77,6 +76,19 @@ app.get('/api/persons', (request, response) => {
 //     const date = Date()
 //     response.send(`<p>Phonebook has info for ${phonebook.length} people</p><p>${date}</p>`) 
 // }) 
+
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      response.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}</p>
+      `)
+    })
+    .catch(function(error){
+        next(error)
+    })
+})
 
 app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id) 
@@ -184,6 +196,7 @@ app.post('/api/persons', (request, response) => {
         .then(function(savedPerson){
             response.status(201).json(savedPerson)
         })
+})
 
 // remove for Exercise 3.14
     // const nameExists = phonebook.find(function(p){
@@ -203,7 +216,7 @@ app.post('/api/persons', (request, response) => {
     // }
     // phonebook = phonebook.concat(newEntry)
     // response.status(201).json(newEntry)
-})
+
 
 app.put('/api/persons/:id', (request, response, next) => {
     const updated = request.body
@@ -229,8 +242,8 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 
-// this has to be the last loaded middleware
-//  also all the routes should be registered before this!
+// error handler has to be the last loaded middleware
+// also all the routes should be registered before this!
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
